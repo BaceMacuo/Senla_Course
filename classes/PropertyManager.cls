@@ -32,6 +32,10 @@ public with sharing class PropertyManager {
         return propertiesList;
     }
 
+    public static Property__c getPropertiesById(Id id, String fields) {
+        return Database.query('SELECT ' + fields + ' FROM Property__c WHERE Id IN :id');
+    }
+
     public static List<Property__c> updateProperties(List<Id> ids, PropertyWrapper wrapper, Boolean updating) {
         List<Property__c> propertiesList = [SELECT Name, Address__c, Owner__c, Selling_Price__c, Rent_price__c FROM Property__c WHERE Id IN :ids];
         List<Property__c> updatedPropertiesList = new List<Property__c>();
@@ -40,7 +44,6 @@ public with sharing class PropertyManager {
             property.Address__c = wrapper.address;
             property.Selling_Price__c = wrapper.selling;
             property.Rent_price__c = wrapper.rent;
-            property.Owner__c = wrapper.owner;
             updatedPropertiesList.add(property);
         }
 
