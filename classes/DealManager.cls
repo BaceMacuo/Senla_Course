@@ -32,13 +32,16 @@ public with sharing class DealManager {
         return dealsList;
     }
 
+    public static Deal__c getDealsById(Id id, String fields) {
+        return Database.query('SELECT ' + fields + ' FROM Deal__c WHERE Id IN :id');
+    }
+
     public static List<Deal__c> updateDeals(List<Id> ids, DealWrapper wrapper, Boolean updating) {
-        List<Deal__c> dealsList = [SELECT Name, Buyer__c, Seller__c, Property__c, Status__c FROM Deal__c WHERE Id IN :ids];
+        List<Deal__c> dealsList = [SELECT Name, Buyer__c, Property__c, Status__c FROM Deal__c WHERE Id IN :ids];
         List<Deal__c> updatedDealsList = new List<Deal__c>();
 
         for (Deal__c deal : dealsList) {
             deal.Buyer__c = wrapper.buyer;
-            deal.Seller__c = wrapper.seller;
             deal.Property__c = wrapper.property;
             deal.Status__c = wrapper.status;
             updatedDealsList.add(deal);
