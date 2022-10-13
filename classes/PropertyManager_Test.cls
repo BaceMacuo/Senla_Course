@@ -25,6 +25,8 @@ private class PropertyManager_Test {
         insert contactsToInsert;
         Property__c property = new Property__c(
                 Address__c = 'Limoja',
+                City__c = 'sab',
+                Country__c = 'Ad',
                 Selling_Price__c = 12000,
                 Rent_price__c = 120,
                 Owner__c = contactsToInsert[0].Id
@@ -32,6 +34,8 @@ private class PropertyManager_Test {
         insert property;
         Property__c property1 = new Property__c(
                 Address__c = 'Push',
+                City__c = 'sab',
+                Country__c = 'Ad',
                 Selling_Price__c = 13000,
                 Rent_price__c = 130,
                 Owner__c = contactsToInsert[1].Id
@@ -39,6 +43,8 @@ private class PropertyManager_Test {
         insert property1;
         Property__c property2 = new Property__c(
                 Address__c = 'Dub',
+                City__c = 'sab',
+                Country__c = 'Ad',
                 Selling_Price__c = 14000,
                 Rent_price__c = 140,
                 Owner__c = contactsToInsert[2].Id
@@ -55,6 +61,17 @@ private class PropertyManager_Test {
         List<Property__c> propertiesFromDealManager = PropertyManager.getPropertiesByIds(idsProperties);
 
         system.assertEquals(properties,propertiesFromDealManager);
+    }
+
+    @IsTest
+    static void testGetPropertiesById(){
+
+        Property__c property = [SELECT Id, Name, Address__c, Owner__c, Selling_Price__c, Rent_price__c  FROM Property__c LIMIT 1];
+        Id idsProperty = property.Id;
+
+        Property__c propertyFromDealManager = PropertyManager.getPropertiesById(idsProperty, 'Id, Name, Address__c, Owner__c, Selling_Price__c, Rent_price__c');
+
+        system.assertEquals(property,propertyFromDealManager);
     }
 
     @IsTest
@@ -77,6 +94,8 @@ private class PropertyManager_Test {
         wrapper.address = 'Dovatoro';
         wrapper.rent = 150;
         wrapper.selling = 15000;
+        wrapper.city = 'city';
+        wrapper.country = 'big';
 
         List<Property__c> propertiesFalseInsert = PropertyManager.createProperties(wrapper, COUNTER, false);
         List<Property__c> propertiesNull = [SELECT Id FROM Property__c WHERE Address__c = 'Dovatoro'];

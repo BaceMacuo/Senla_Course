@@ -2,38 +2,39 @@
  * Created by booka on 01.10.2022.
  */
 
-public with sharing class DealTriggerHandler {
+public with sharing class DealTriggerHandler extends TriggerHandler{
 
     static final String RECORD_TYPE_DEAL_SALE = Schema.SObjectType.Deal__c.getRecordTypeInfosByName().get('Sale').getRecordTypeId();
     static final String CLOSED_WON = 'Closed Won';
 
-    public void afterUpdateMain(List<Deal__c> dealsNew){
-        afterUpdate(dealsNew);
-    }
+    public override void afterUpdate() {
 
-    public void afterUpdate(List<Deal__c> dealsNew){
+        List<Id> propertyIds = new List<Id>();
 
-        List<Id> propertiesIds = new List<Id>();
-        List<Deal__c> dealsClosedWon = new List<Deal__c>();
+        for (Id dealId : Trigger.newMap.keySet()) {
+            Deal__c newDeal = ((Deal__c) Trigger.newMap.get(dealId));
 
-        for(Deal__c d : dealsNew){
-            if(d.Status__c == CLOSED_WON && d.RecordTypeId == RECORD_TYPE_DEAL_SALE) {
-                propertiesIds.add(d.Property__c);
-                dealsClosedWon.add(d);
+            if (newDeal.RecordTypeId == RECORD_TYPE_DEAL_SALE || newDeal.Status__c != CLOSED_WON) continue;
+            if (newDeal.Status__c != Trigger.oldMap.get(dealId).get(Deal__c.Status__c)) propertyIds.add(newDeal.Property__c);
+        }
+
+        if (!propertyIds.isEmpty()) {
+            List<Deal__c> getNotClosedSaleDealsByProperties = [
+                SELECT Id
+                FROM Deal__c
+                WHERE Property__c IN :propertyIds
+                AND Status__c NOT IN ('Closed Won', 'Closed', 'Closed Lost')
+                AND RecordTypeId = :RECORD_TYPE_DEAL_SALE
+                ];
+
+            for (Deal__c dl : getNotClosedSaleDealsByProperties) {
+                dl.Status__c = 'Closed Lost';
             }
-        }
 
-        List<Deal__c> updateDeals = [SELECT Id, Status__c, RecordTypeId
-                                    FROM Deal__c
-                                    WHERE Property__c IN : propertiesIds
-                                    AND RecordTypeId =: RECORD_TYPE_DEAL_SALE
-                                    AND (NOT Status__c LIKE : 'Closed')
-                                    AND (NOT Id IN : dealsClosedWon)];
+            TriggerHandler.bypass('DealTriggerHandler');
+            Database.SaveResult[] results = Database.update(getNotClosedSaleDealsByProperties, false);
+            TriggerHandler.clearBypass('DealTriggerHandler');
 
-        for(Deal__c deal: updateDeals){
-            deal.Status__c = 'Closed Lost';
         }
-        update updateDeals;
     }
-
 }

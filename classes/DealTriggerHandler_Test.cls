@@ -24,6 +24,8 @@ private class DealTriggerHandler_Test {
         insert contactsToInsert;
         Property__c property = new Property__c(
                 Address__c = 'Limoja',
+                City__c = 'sab',
+                Country__c = 'Ad',
                 Selling_Price__c = 12000,
                 Owner__c = contactsToInsert[1].Id
         );
