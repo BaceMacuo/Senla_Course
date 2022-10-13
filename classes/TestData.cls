@@ -29,7 +29,7 @@ private class TestData {
             properties[i] = new Property__c(Address__c = 'Limoja ' + i,
                     Rent_Price__c = 10 / i,
                     Selling_Price__c = 999 - i,
-                    Owner__c = '123456789');
+                    Owner__c = '123454321');
         }
         insert properties;
         return properties;

@@ -33,7 +33,7 @@ public with sharing class DealManager {
     }
 
     public static Deal__c getDealsById(Id id, String fields) {
-        return Database.query('SELECT ' + fields + ' FROM Deal__c WHERE Id IN :id');
+        return Database.query('SELECT ' + fields + ' FROM Deal__c WHERE Id =:id');
     }
 
     public static List<Deal__c> updateDeals(List<Id> ids, DealWrapper wrapper, Boolean updating) {

@@ -36,6 +36,10 @@ public with sharing class ContactManager {
         return contactsList;
     }
 
+    public static Contact getContactsById(Id id, String fields) {
+        return Database.query('SELECT ' + fields + ' FROM Contact WHERE Id =:id');
+    }
+
     public static List<Contact> updateContacts(List<Id> ids, ContactWrapper wrapper, Boolean updating) {
         List<Contact> contactsList = [SELECT Name, RecordTypeId, Phone, HomePhone, Email FROM Contact WHERE Id IN :ids];
         List<Contact> updatedContactsList = new List<Contact>();

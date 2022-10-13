@@ -28,6 +28,8 @@ private class DealManager_Test {
         insert contactsToInsert;
         Property__c property = new Property__c(
                 Address__c = 'Limoja',
+                City__c = 'sab',
+                Country__c = 'Ad',
                 Selling_Price__c = 12000,
                 Owner__c = contactsToInsert[1].Id
         );
@@ -74,6 +76,17 @@ private class DealManager_Test {
         List<Deal__c> dealsFromDealManager = DealManager.getDealsByIds(idsDeals);
 
         system.assertEquals(deals,dealsFromDealManager);
+    }
+
+    @IsTest
+    static void testGetDealsById(){
+
+        Deal__c deal = [SELECT Id, Name, Buyer__c, Seller__c, Property__c, Status__c FROM Deal__c LIMIT 1];
+        Id idsDeal = deal.Id;
+
+        Deal__c dealsFromDealManager = DealManager.getDealsById(idsDeal, 'Id, Name, Buyer__c, Seller__c, Property__c, Status__c');
+
+        system.assertEquals(deal,dealsFromDealManager);
     }
 
     @IsTest

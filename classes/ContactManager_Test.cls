@@ -43,6 +43,17 @@ private class ContactManager_Test {
     }
 
     @IsTest
+    static void testGetContactsById()
+    {
+        Contact contact = [SELECT Id, Name, RecordTypeId, Phone, HomePhone, Email FROM Contact LIMIT 1];
+        Id iContact = contact.Id;
+
+        Contact contactFromConManager = ContactManager.getContactsById(iContact, 'Id, Name, RecordTypeId, Phone, HomePhone, Email');
+
+        system.assertEquals(contact,contactFromConManager);
+    }
+
+    @IsTest
     static void testDeleteContacts()
     {
         List<Id> idsContact = new List<Id>(new Map<Id, Contact>([SELECT Id FROM Contact]).keySet());
