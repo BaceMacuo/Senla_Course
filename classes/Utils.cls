@@ -26,4 +26,44 @@ public with sharing class Utils {
 
         return JSON.serialize(info);
     }
+    public class Response {
+        public Date startDate {get; set;}
+        public Date endDate {get; set;}
+        public String totalRevenue {get; set;}
+        public List<DealWrapper> deals {get; set;}
+
+        public Response (Date startDate, Date endDate, List<Deal__c> deals) {
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.deals = new List<DealWrapper>();
+            Decimal revenue = 0;
+            for (Deal__c deal : deals) {
+                this.deals.add(new DealWrapper(deal));
+                revenue += deal.Transaction_amount_rent__c;
+            }
+
+            this.totalRevenue = String.valueOf(revenue);
+        }
+    }
+    public class DealWrapper {
+        public String sfId {get; set;}
+        public String dealType {get; set;}
+        public Client realtor {get; set;}
+        public Decimal revenue {get; set;}
+        public String clientId {get; set;}
+        public String propertyId {get; set;}
+
+        public DealWrapper (Deal__c deal) {
+            this.sfId = deal.Id;
+            this.dealType = deal.RecordType.Name;
+            this.realtor = new Client(deal.Seller__r.Id, deal.Seller__r.Email, deal.Seller__r.FirstName, deal.Seller__r.LastName);
+            this.revenue = deal.Transaction_amount_rent__c;
+            this.clientId = deal.Buyer__r.Id;
+            this.propertyId = deal.Property__c;
+        }
+    }
+    public class UpdatePropertyOwner {
+        public String propertyId {get; set;}
+        public Client owner {get; set;}
+    }
 }
