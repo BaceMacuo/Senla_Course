@@ -1,0 +1,56 @@
+<!--
+ - Created by booka on 01.11.2022.
+ -->
+
+<apex:page lightningStylesheets="true" standardController="Contact" extensions="PropertyOwnerInfoReport_Resources">
+    <style type="text/css">
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 24px;
+        }
+    </style>
+
+    <div id="page" class="slds">
+        <h1 id="element-with-table-label" class="slds-text-heading_medium slds-m-bottom_xx-small" style="text-align:center;">Property Owner Info Report</h1>
+        <h3 id="element-with-table-label" class="slds-text-heading_medium slds-m-bottom_xx-small" style="margin-left: 50px">Property Owner Name: {!Contact.Name}</h3>
+        <h3 id="element-with-table-label" class="slds-text-heading_medium slds-m-bottom_xx-small" style="margin-left: 50px">Total Property Price: {!Contact.Total_Property_Price__c}</h3>
+
+        <div class="table_div" >
+            <table>
+                <thead style="background-color: rgb(127, 173, 243);">
+                <th> <p><b> Property Type </b></p> </th>
+                <th> <p><b> Count Deals </b></p> </th>
+                <th> <p><b> Sum From Type </b></p> </th>
+                <th> <p><b> Sum After Percent </b></p> </th>
+                </thead>
+
+                <tr>
+                    <td> <p>Industrial</p> </td>
+                    <td> <p>{!industrial.countDeals}</p> </td>
+                    <td> <p>{!industrial.sumFromType}</p> </td>
+                    <td> <p>{!industrial.sumAfterPercent}</p> </td>
+                </tr>
+                <tr>
+                    <td> <p>Office</p> </td>
+                    <td> <p>{!office.countDeals}</p> </td>
+                    <td> <p>{!office.sumFromType}</p> </td>
+                    <td> <p>{!office.sumAfterPercent}</p> </td>
+                </tr>
+                <tr>
+                    <td> <p>Space</p> </td>
+                    <td> <p>{!Space.countDeals}</p> </td>
+                    <td> <p>{!Space.sumFromType}</p> </td>
+                    <td> <p>{!Space.sumAfterPercent}</p> </td>
+                </tr>
+            </table>
+        </div>
+
+        <apex:image url="{!$Resource.Stamp}" width="135" height="100" style="float: right; margin-top: 20px"/>
+    </div>
+</apex:page>
