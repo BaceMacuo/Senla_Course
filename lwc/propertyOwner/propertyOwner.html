@@ -1,0 +1,25 @@
+<!--
+ - Created by booka on 14.11.2022.
+ -->
+<!-- Property Owner -->
+<template>
+    <template if:true={dataCheck}>
+    <lightning-card icon-name="standard:contact">
+        <h1 slot="title">Property Owner Info</h1>
+        <div slot="actions">
+            <lightning-button label={name} slot="actions" onclick={navigateToOwner}></lightning-button>
+        </div>
+        <div class="slds-m-around_medium">
+            <p>First Name: {firstName}</p>
+            <p>Last Name: {lastName}</p>
+            <p>Phone: <lightning-formatted-phone value={phone}></lightning-formatted-phone></p>
+            <p>Home Phone: <lightning-formatted-phone value={homePhone}></lightning-formatted-phone></p>
+            <p>Email: <lightning-formatted-email value={email}></lightning-formatted-email></p>
+            <p>Total Property Price: {totalPropertyPrice}</p>
+        </div>
+    </lightning-card>
+    </template>
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+</template>
