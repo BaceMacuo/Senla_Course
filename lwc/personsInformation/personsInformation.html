@@ -1,0 +1,56 @@
+<!--
+ - Created by booka on 14.11.2022.
+ -->
+
+<!-- Persons Information -->
+<template>
+    <lightning-card>
+        <div class="headTitle">
+            <h1 class="title">Persons Information</h1>
+        </div>
+        <div class="sorting">
+            <lightning-combobox
+                    class="sorting-item"
+                    name="sortBy"
+                    placeholder="Sort By"
+                    value={valueCombobox}
+                    options={options}
+                    onchange={handleCombobox}>
+            </lightning-combobox>
+
+            <lightning-input class="sorting-item" type="date" name="from" placeholder="From"
+                             onchange={handleDateFrom}></lightning-input>
+            <lightning-input class="sorting-item" type="date" name="to" placeholder="To"
+                             onchange={handleDateTo}></lightning-input>
+
+            <lightning-input class="sorting-item-checkbox" type="checkbox"
+                             checked={valueCheckboxFemale} label="FEMALE" name="Female"
+                             onchange={handleCheckboxFemale} disabled={disableCheckboxFemale}></lightning-input>
+            <lightning-input class="sorting-item-checkbox" type="checkbox"
+                             checked={valueCheckboxMale} label="MALE" name="Male"
+                             onchange={handleCheckboxMale} disabled={disableCheckboxMale}></lightning-input>
+
+            <lightning-input class="sorting-item" type="email"
+                             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                             message-when-pattern-mismatch="Your email address is incorrect"
+                             name="email" placeholder="Email" onchange={handleEmail}></lightning-input>
+
+            <lightning-button
+                    class="sorting-item"
+                    variant="destructive"
+                    label="Reset All"
+                    type="reset"
+                    onclick={handleReset}>
+            </lightning-button>
+
+        </div>
+
+        <lightning-datatable
+                class="tableStyle"
+                key-field="id"
+                data={persons}
+                columns={columns}
+                hide-checkbox-column>
+        </lightning-datatable>
+    </lightning-card>
+</template>
