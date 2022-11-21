@@ -2,212 +2,97 @@
  * Created by booka on 14.11.2022.
  */
 
-import {LightningElement, track} from 'lwc';
-
-//https://www.hitak.ru/gen/create
-const persons = [
-    {
-        Id: 1,
-        firstName: 'Anthony',
-        lastName: 'Hill',
-        birthday: '1986-06-13',
-        gender: 'MALE',
-        email: 'freddie.davies@example.com'
-    },
-    {
-        Id: 2,
-        firstName: 'Paula',
-        lastName: 'Taylor',
-        birthday: '1953-07-13',
-        gender: 'MALE',
-        email: 'fmurphy@example.com'
-    },
-    {
-        Id: 3,
-        firstName: 'Ross',
-        lastName: 'Evans',
-        birthday: '1969-11-09',
-        gender: 'FEMALE',
-        email: 'asimpson@example.com'
-    },
-    {
-        Id: 4,
-        firstName: 'Helen',
-        lastName: 'Rogers',
-        birthday: '1977-06-15',
-        gender: 'FEMALE',
-        email: 'walker.chris@example.org'
-    },
-    {
-        Id: 5,
-        firstName: 'Elizabeth',
-        lastName: 'Parker',
-        birthday: '1958-11-04',
-        gender: 'FEMALE',
-        email: 'holmes.archie@example.net'
-    },
-    {
-        Id: 6,
-        firstName: 'Jim',
-        lastName: 'Morris',
-        birthday: '1947-01-12',
-        gender: 'MALE',
-        email: 'hunt.tanya@example.com'
-    },
-    {
-        Id: 7,
-        firstName: 'Jayden',
-        lastName: 'Miller',
-        birthday: '1993-12-28',
-        gender: 'MALE',
-        email: 'faye33@example.net'
-    },
-    {
-        Id: 8,
-        firstName: 'Erin',
-        lastName: 'Roberts',
-        birthday: '2002-08-30',
-        gender: 'FEMALE',
-        email: 'russell.evie@example.net'
-    },
-    {
-        Id: 9,
-        firstName: 'Ella',
-        lastName: 'Robertson',
-        birthday: '1976-06-24',
-        gender: 'FEMALE',
-        email: 'bell.christopher@example.com'
-    },
-    {
-        Id: 10,
-        firstName: 'Logan',
-        lastName: 'Stewart',
-        birthday: '1975-01-17',
-        gender: 'MALE',
-        email: 'jeremy06@example.net'
-    },
-];
-
-const columns = [
-    {label: 'First Name', fieldName: 'firstName'},
-    {label: 'Last Name', fieldName: 'lastName'},
-    {label: 'Birthday', fieldName: 'birthday', type: 'date'},
-    {label: 'Gender', fieldName: 'gender'},
-    {label: 'Email', fieldName: 'email', type: 'email'},
-];
+import {LightningElement} from 'lwc';
+import {
+    COLUMNS_FOR_SORT_BY_PERSON_INFORMATION_PAGE,
+    COLUMNS_FOR_TABLE_PERSON_INFORMATION_PAGE,
+    GENDER,
+    PERSONS,
+} from 'c/utils';
 
 export default class PersonsInformation extends LightningElement {
-    @track persons = persons;
-    @track personsDuplicated = persons;
-    columns = columns;
+    personsValue = PERSONS;
+    columns = COLUMNS_FOR_TABLE_PERSON_INFORMATION_PAGE;
+    optionsForSortBy = COLUMNS_FOR_SORT_BY_PERSON_INFORMATION_PAGE;
 
-    @track valueCheckboxFemale = false;
-    @track valueCheckboxMale = false;
-    @track valueCombobox = '';
-    @track disableCheckboxFemale = false;
-    @track disableCheckboxMale = false;
-    @track valueEmail = '';
+    disableCheckboxFemale;
+    disableCheckboxMale;
+    valueCombobox = '';
+    valueEmail = '';
+    dateTo = '';
+    dateFrom = '';
+    genderByLabelInput = '';
 
-    //combobox-start
-    get options() {
-        return [
-            {label: 'First Name', value: 'firstName'},
-            {label: 'Last Name', value: 'lastName'},
-            {label: 'Email', value: 'email'},
-        ];
-    }
-
+    //combobox
     handleCombobox(event) {
         this.valueCombobox = event.detail.value;
-        const result = JSON.parse(JSON.stringify(this.persons)).sort((first, second) => first[event.detail.value].localeCompare(second[event.detail.value]));
-        this.persons = result;
+        this.logic();
     }
 
-    //combobox-end
-
-    //date-start
-    handleDateFrom(event) {
-        const choseDate = new Date(event.detail.value);
-        const result = this.persons.filter(item => {
-            return new Date(item.birthday) >= choseDate
-        });
-        this.persons = result;
+    //date
+    handleDate() {
+        this.dateTo = this.template.querySelector('[data-id="inputDateTo"]').value ?? '';
+        this.dateFrom = this.template.querySelector('[data-id="inputDateFrom"]').value ?? '';
+        this.logic();
     }
 
-    handleDateTo(event) {
-        const choseDate = new Date(event.detail.value);
-        const result = this.persons.filter(item => {
-            return new Date(item.birthday) <= choseDate
-        });
-        this.persons = result;
-    }
-
-    //date-end
-
-    //checkbox-start
-    handleCheckboxMale() {
-        if (this.valueCheckboxMale == true) {
-            this.valueCheckboxFemale = false;
-            this.valueCheckboxMale = false;
-            this.persons = this.personsDuplicated;
-            this.disableCheckboxFemale = false;
-        } else {
-            this.valueCheckboxFemale = false;
-            this.valueCheckboxMale = true;
-            const result = this.persons.filter(item => {
-                return item.gender == 'MALE';
+    //checkbox
+    handleCheckboxGender() {
+        this.genderByLabelInput = '';
+        this.template.querySelectorAll(".sorting-item-checkbox")
+            .forEach(element => {
+                if(element.checked == true){
+                    this.genderByLabelInput = element.label;
+                }
             });
-            this.persons = result;
-            this.disableCheckboxFemale = true;
+        switch (this.genderByLabelInput) {
+            case 'FEMALE':
+                this.disableCheckboxMale = true;
+                this.logic();
+                break;
+            case 'MALE':
+                this.disableCheckboxFemale = true;
+                this.logic();
+                break;
+            default:
+                this.disableCheckboxFemale = false;
+                this.disableCheckboxMale = false;
+                this.logic();
         }
     }
-
-    handleCheckboxFemale() {
-        if (this.valueCheckboxFemale == true) {
-            this.valueCheckboxFemale = false;
-            this.valueCheckboxMale = false;
-            this.persons = this.personsDuplicated;
-            this.disableCheckboxMale = false;
-        } else {
-            this.valueCheckboxFemale = true;
-            this.valueCheckboxMale = false;
-            this.personsDuplicated = this.persons;
-            const result = this.persons.filter(item => {
-                return item.gender == 'FEMALE';
-            });
-            this.persons = result;
-            this.disableCheckboxMale = true;
-        }
-    }
-
-    //checkbox-end
 
     //email
     handleEmail(event) {
-        if (event.detail.value == '') {
-            this.persons = this.personsDuplicated;
-        } else {
-            this.personsDuplicated = this.persons;
-            const result = this.persons.filter(item => {
-                return item.email.toLowerCase().includes(event.target.value.toLowerCase());
-            });
-            this.persons = result;
-        }
+        this.valueEmail = event.target.value ?? '';
+        this.logic();
     }
 
     //buttonReset
     handleReset() {
         this.valueCombobox = '';
-        this.persons = persons;
+        this.personsValue = PERSONS;
         this.template.querySelectorAll(".sorting-item")
-            .forEach(element => {
-                element.value = null;
-            });
-        this.valueCheckboxFemale = false;
-        this.valueCheckboxMale = false;
+            .forEach(element => element.value = null);
+        this.template.querySelectorAll(".sorting-item-checkbox")
+            .forEach(element => element.checked = false);
         this.disableCheckboxFemale = false;
         this.disableCheckboxMale = false;
     }
 
-
+    logic(){
+        this.personsValue = PERSONS
+            .filter(item => this.genderByLabelInput != ''
+                ? item.gender == GENDER[this.genderByLabelInput] : item)
+            .filter(item => this.valueEmail != ''
+                ? item.email.toLowerCase().includes(this.valueEmail.toLowerCase()): item)
+            .filter(item => this.dateTo != ''
+                ? new Date(item.birthday) <= new Date(this.dateTo) : item)
+            .filter(item => this.dateFrom != ''
+                ? new Date(item.birthday) >= new Date(this.dateFrom) : item);
+        if(this.valueCombobox != ''){
+            this.personsValue = JSON.parse(JSON.stringify(this.personsValue))
+                .sort((first, second) => first[this.valueCombobox]
+                    .localeCompare(second[this.valueCombobox]));
+        }
+    }
 }
