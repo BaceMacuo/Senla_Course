@@ -14,21 +14,21 @@
                     name="sortBy"
                     placeholder="Sort By"
                     value={valueCombobox}
-                    options={options}
+                    options={optionsForSortBy}
                     onchange={handleCombobox}>
             </lightning-combobox>
 
-            <lightning-input class="sorting-item" type="date" name="from" placeholder="From"
-                             onchange={handleDateFrom}></lightning-input>
-            <lightning-input class="sorting-item" type="date" name="to" placeholder="To"
-                             onchange={handleDateTo}></lightning-input>
+            <lightning-input data-id="inputDateFrom" class="sorting-item" type="date" name="from" label="" placeholder="From"
+                             onchange={handleDate}></lightning-input>
+            <lightning-input data-id="inputDateTo" class="sorting-item" type="date" name="to" label="" placeholder="To"
+                             onchange={handleDate}></lightning-input>
 
             <lightning-input class="sorting-item-checkbox" type="checkbox"
-                             checked={valueCheckboxFemale} label="FEMALE" name="Female"
-                             onchange={handleCheckboxFemale} disabled={disableCheckboxFemale}></lightning-input>
+                             label="FEMALE" name="Female" onchange={handleCheckboxGender}
+                             disabled={disableCheckboxFemale}></lightning-input>
             <lightning-input class="sorting-item-checkbox" type="checkbox"
-                             checked={valueCheckboxMale} label="MALE" name="Male"
-                             onchange={handleCheckboxMale} disabled={disableCheckboxMale}></lightning-input>
+                             label="MALE" name="Male" onchange={handleCheckboxGender}
+                             disabled={disableCheckboxMale}></lightning-input>
 
             <lightning-input class="sorting-item" type="email"
                              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
@@ -48,7 +48,7 @@
         <lightning-datatable
                 class="tableStyle"
                 key-field="id"
-                data={persons}
+                data={personsValue}
                 columns={columns}
                 hide-checkbox-column>
         </lightning-datatable>

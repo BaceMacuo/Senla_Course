@@ -2,36 +2,30 @@
  * Created by booka on 14.11.2022.
  */
 
-import {LightningElement, api, wire, track} from 'lwc';
+import {LightningElement, api, wire} from 'lwc';
 import {getFieldValue, getRecord} from "lightning/uiRecordApi";
 import { NavigationMixin } from 'lightning/navigation';
+import {navigateToOwner, FIELDS_BY_PROPERTY} from 'c/utils'
 
-const FIELDS = [
-    'Property__c.Owner__r.FirstName',
-    'Property__c.Owner__r.LastName',
-    'Property__c.Owner__r.Phone',
-    'Property__c.Owner__r.HomePhone',
-    'Property__c.Owner__r.Email',
-    'Property__c.Owner__r.Total_Property_Price__c',
-    'Property__c.Owner__r.Id',
-    'Property__c.Owner__r.Name',
-];
+const CONTACT_OBJECT_API_NAME_FOR_NAVIGATION = 'Contact';
+const VIEW_ACTION_NAME_FOR_NAVIGATION = 'view';
 
 export default class PropertyOwner extends NavigationMixin(LightningElement) {
     @api recordId;
-    @track dataCheck;
-    @track error;
-    @track ownerId;
+    dataCheck;
+    error;
+    ownerId;
+    takeNavigateToOwnerMethod = navigateToOwner.bind(this);
 
-    @track name;
-    @track firstName;
-    @track lastName;
-    @track phone;
-    @track homePhone;
-    @track email;
-    @track totalPropertyPrice;
+    name;
+    firstName;
+    lastName;
+    phone;
+    homePhone;
+    email;
+    totalPropertyPrice;
 
-    @wire(getRecord, { recordId: '$recordId', fields: FIELDS })
+    @wire(getRecord, { recordId: '$recordId', fields: FIELDS_BY_PROPERTY })
     wiredContact({ error, data }) {
         if(error){
             this.error = error;
@@ -49,14 +43,10 @@ export default class PropertyOwner extends NavigationMixin(LightningElement) {
         }
     }
 
-    navigateToOwner() {
-        this[NavigationMixin.Navigate]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId: this.ownerId,
-                objectApiName:'Contact',
-                actionName: 'view',
-            },
-        });
+    handleClickNavigateToOwner() {
+        this.takeNavigateToOwnerMethod(
+            this.ownerId,
+            CONTACT_OBJECT_API_NAME_FOR_NAVIGATION,
+            VIEW_ACTION_NAME_FOR_NAVIGATION);
     }
 }
